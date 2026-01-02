@@ -4,16 +4,15 @@ OpenCode plugin with Context7 MCP, research agent, and debug skill.
 
 ## Install
 
+```bash
+cd ~/.opencode && bun add https://pkg.pr.new/perfux/perfux-opencode-plugin@main
+```
+
 Add to `opencode.json`:
 ```json
 {
   "plugin": ["perfux-opencode-plugin"]
 }
-```
-
-For private repo access, manually install first:
-```bash
-cd ~/.opencode && bun add "git+ssh://git@github.com:perfux/perfux-opencode-plugin.git"
 ```
 
 ## Features
