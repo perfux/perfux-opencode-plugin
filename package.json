@@ -19,13 +19,18 @@
   },
   "scripts": {
     "build": "tsc",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "bun run build",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bun run build && git add dist/"
   },
   "dependencies": {
     "@opencode-ai/plugin": "^1.0.162"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "simple-git-hooks": "^2.11.1",
     "typescript": "^5.7.0"
   }
 }
