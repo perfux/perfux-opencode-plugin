@@ -1,28 +1,35 @@
 import { researchAgent } from "./agents/research.js";
-import { debugSkill } from "./skills/debug.js";
-import { existsSync, appendFileSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, cpSync, appendFileSync, readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const PerfuxPlugin = async (ctx) => {
-    // Ensure .context/ is gitignored in the project
+    // Ensure .context/ is gitignored
     const ensureContextIgnored = () => {
         const gitignorePath = join(ctx.directory, ".gitignore");
-        const ignoreEntry = "\n# Perfux plugin research folder\n.context/\n";
+        const entry = "\n# Perfux plugin\n.context/\n";
         if (existsSync(gitignorePath)) {
             const content = readFileSync(gitignorePath, "utf-8");
             if (!content.includes(".context/")) {
-                appendFileSync(gitignorePath, ignoreEntry);
+                appendFileSync(gitignorePath, entry);
             }
         }
-        else {
-            appendFileSync(gitignorePath, ignoreEntry);
+    };
+    // Install bundled skill to project
+    const installSkill = () => {
+        const src = join(__dirname, "skill", "debug");
+        const dest = join(ctx.directory, ".opencode", "skill", "debug");
+        if (existsSync(src)) {
+            mkdirSync(dirname(dest), { recursive: true });
+            cpSync(src, dest, { recursive: true, force: true });
         }
     };
-    // Run once on plugin load
     try {
         ensureContextIgnored();
+        installSkill();
     }
     catch {
-        // Ignore errors (e.g., read-only filesystem)
+        // Ignore errors
     }
     return {
         config: async (config) => {
@@ -30,8 +37,8 @@ const PerfuxPlugin = async (ctx) => {
             config.mcp = {
                 ...config.mcp,
                 context7: {
-                    command: "npx",
-                    args: ["-y", "@upstash/context7-mcp@latest"],
+                    type: "local",
+                    command: ["npx", "-y", "@upstash/context7-mcp@latest"],
                 },
             };
             // Inject research agent
@@ -39,13 +46,7 @@ const PerfuxPlugin = async (ctx) => {
                 ...config.agent,
                 research: researchAgent,
             };
-            // Inject debug skill
-            config.skill = {
-                ...config.skill,
-                debug: debugSkill,
-            };
         },
-        // Inject emoji instruction into system prompt
         "experimental.chat.system.transform": async (_input, output) => {
             output.system.push(`<perfux-plugin-instruction>
 Start every reply with a relevant emoji.

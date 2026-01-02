@@ -2,15 +2,10 @@
 
 ## Setup
 ```bash
-cd /path/to/perfux-opencode-plugin
-npm install && npm run build
-npm link
-
-cd ~/.config/opencode  # or your test project
-npm link perfux-opencode-plugin
+cd ~/.opencode && bun add "git+ssh://git@github.com:perfux/perfux-opencode-plugin.git"
 ```
 
-Add to `opencode.json`:
+Add to project's `opencode.json`:
 ```json
 { "plugin": ["perfux-opencode-plugin"] }
 ```
@@ -19,24 +14,27 @@ Add to `opencode.json`:
 
 ### 1. Emoji Injection
 - [ ] Start opencode, send any message
-- [ ] **Expected**: Reply starts with emoji
+- [ ] Expected: Reply starts with emoji
 
 ### 2. Context7 MCP
 - [ ] Run: `What tools do you have?`
-- [ ] **Expected**: Lists `mcp__context7__*` tools
+- [ ] Expected: Lists `mcp__context7__*` tools
 
 ### 3. Research Agent
 - [ ] Run: `@research how does zustand work`
-- [ ] **Expected**: Uses Context7/web search, concise response
+- [ ] Expected: Uses Context7/web search, concise response
 
-### 4. Repo Cloning + Gitignore
-- [ ] Ask research agent to clone a repo
-- [ ] **Expected**: Clones to `.context/`, entry added to `.gitignore`
-
-### 5. Debug Skill
+### 4. Debug Skill
 - [ ] Run: `/debug`
-- [ ] Add some `[DEBUG:PERFUX]` logs to a test file
-- [ ] Run: `npx perfux-opencode-plugin remove-debug-logs --dry-run`
-- [ ] **Expected**: Shows files/lines that would be removed
+- [ ] Expected: Shows debug logging instructions
+- [ ] Check: `.opencode/skill/debug/` folder exists with SKILL.md and scripts/
+
+### 5. Debug Log Removal
+- [ ] Add `[DEBUG:PERFUX]` logs to a test file
+- [ ] Run: `bun .opencode/skill/debug/scripts/remove-debug-logs.ts --dry-run`
+- [ ] Expected: Shows files that would be cleaned
 - [ ] Run without `--dry-run`
-- [ ] **Expected**: Debug lines removed from files
+- [ ] Expected: Debug lines removed
+
+### 6. .context/ Gitignore
+- [ ] Check `.gitignore` contains `.context/`

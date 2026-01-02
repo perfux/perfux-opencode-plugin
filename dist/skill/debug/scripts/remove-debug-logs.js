@@ -1,8 +1,9 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
 import { join, extname } from "node:path";
 const DEBUG_MARKER = "[DEBUG:PERFUX]";
 const EXTENSIONS = [".js", ".ts", ".jsx", ".tsx", ".py", ".rb", ".go", ".rs", ".java", ".kt", ".swift", ".c", ".cpp", ".h"];
+const SKIP_DIRS = ["node_modules", ".git", "dist", "build", ".context", "__pycache__", ".venv", "venv", ".opencode"];
 function removeDebugLogs(dir, dryRun = false) {
     let removed = 0;
     function processFile(filePath) {
@@ -21,10 +22,8 @@ function removeDebugLogs(dir, dryRun = false) {
     function walk(currentDir) {
         const entries = readdirSync(currentDir);
         for (const entry of entries) {
-            // Skip common non-source directories
-            if (["node_modules", ".git", "dist", "build", ".context", "__pycache__", ".venv", "venv"].includes(entry)) {
+            if (SKIP_DIRS.includes(entry))
                 continue;
-            }
             const fullPath = join(currentDir, entry);
             const stat = statSync(fullPath);
             if (stat.isDirectory()) {
@@ -38,7 +37,6 @@ function removeDebugLogs(dir, dryRun = false) {
     walk(dir);
     return removed;
 }
-// CLI
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run") || args.includes("-n");
 const dir = args.find((a) => !a.startsWith("-")) || process.cwd();

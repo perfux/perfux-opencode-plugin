@@ -4,12 +4,8 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "bin": {
-    "remove-debug-logs": "dist/scripts/remove-debug-logs.js"
-  },
   "files": [
-    "dist",
-    "AGENTS.md"
+    "dist"
   ],
   "exports": {
     ".": {
@@ -18,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r src/skill dist/",
     "prepublishOnly": "bun run build",
     "prepare": "simple-git-hooks"
   },

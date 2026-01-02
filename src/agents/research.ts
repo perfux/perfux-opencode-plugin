@@ -1,4 +1,5 @@
 export const researchAgent = {
+  mode: "subagent" as const,
   model: "anthropic/claude-sonnet-4-20250514",
   description: "Research agent using Context7 docs + web search + repo cloning",
   prompt: `You are a focused research agent. Your job: find accurate information fast.
@@ -20,16 +21,12 @@ The .context/ folder is auto-gitignored by this plugin.
 - Include source links
 - If uncertain, say so
 - No fluff, just findings`,
-  tools: {
-    bash: true,
-    read: true,
-    glob: true,
-    grep: true,
-    webfetch: true,
-    websearch: true,
-  },
   permission: {
     bash: "allow",
     read: "allow",
+    glob: "allow",
+    grep: "allow",
+    webfetch: "allow",
+    websearch: "allow",
   },
 }
